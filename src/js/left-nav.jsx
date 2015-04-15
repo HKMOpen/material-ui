@@ -4,7 +4,7 @@ var React = require('react'),
   WindowListenable = require('./mixins/window-listenable'),
   Overlay = require('./overlay'),
   Paper = require('./paper'),
-  Menu = require('./menu');
+  Menu = require('./menu/menu');
 
 var LeftNav = React.createClass({
 
@@ -15,7 +15,9 @@ var LeftNav = React.createClass({
     header: React.PropTypes.element,
     onChange: React.PropTypes.func,
     menuItems: React.PropTypes.array.isRequired,
-    selectedIndex: React.PropTypes.number
+    selectedIndex: React.PropTypes.number,
+    onNavOpen: React.PropTypes.func,
+    onNavClose: React.PropTypes.func
   },
 
   windowListeners: {
@@ -41,11 +43,13 @@ var LeftNav = React.createClass({
 
   close: function() {
     this.setState({ open: false });
+    if (this.props.onNavClose) this.props.onNavClose();
     return this;
   },
 
   open: function() {
     this.setState({ open: true });
+    if (this.props.onNavOpen) this.props.onNavOpen();
     return this;
   },
 
@@ -82,10 +86,10 @@ var LeftNav = React.createClass({
   },
 
   _onMenuItemClick: function(e, key, payload) {
-    if (!this.props.docked) this.close();
     if (this.props.onChange && this.props.selectedIndex !== key) {
       this.props.onChange(e, key, payload);
     }
+    if (!this.props.docked) this.close();
   },
 
   _onOverlayTouchTap: function() {
